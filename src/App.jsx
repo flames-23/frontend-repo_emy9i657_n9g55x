@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import HeaderHero from './components/HeaderHero';
 import Services from './components/Services';
 import VideoAds from './components/VideoAds';
@@ -15,11 +15,17 @@ export default function App() {
   }, []);
 
   const isDetail = useMemo(() => hash.startsWith('#/service/'), [hash]);
+  const serviceKey = useMemo(() => (isDetail ? hash.split('/')[2] : ''), [hash, isDetail]);
 
   return (
     <div className="font-[Poppins] bg-[#0f1724] text-white selection:bg-[#1E90FF]/30">
       {isDetail ? (
-        <ServiceDetails route={hash} />
+        <ServiceDetails
+          serviceKey={serviceKey}
+          onBack={() => {
+            window.location.hash = '#/';
+          }}
+        />
       ) : (
         <>
           <HeaderHero />
@@ -31,7 +37,7 @@ export default function App() {
             href="https://wa.me/923015723055"
             target="_blank"
             rel="noreferrer"
-            className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-gradient-to-br from-[#32CD32] to-[#1E90FF] shadow-xl grid place-items-center text-white hover:scale-105 transition"
+            className="fixed bottom-6 right-6 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white shadow-xl transition hover:scale-105"
             aria-label="WhatsApp Chat"
           >
             WA

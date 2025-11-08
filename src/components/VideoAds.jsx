@@ -1,75 +1,67 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-const VIDEOS = [
+const ads = [
   {
-    src: 'https://images.unsplash.com/photo-1580437017351-75766a55c1ad?ixid=M3w3OTkxMTl8MHwxfHNlYXJjaHwxfHxQcm9kdWN0JTIwTGF1bmNoJTIwQWR8ZW58MHwwfHx8MTc2MjU2MTQyNHww&ixlib=rb-4.1.0&w=1600&auto=format&fit=crop&q=80',
-    poster: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop',
-    title: 'Product Launch Ad',
+    src: 'https://cdn.coverr.co/videos/coverr-urban-fashion-shoot-3786/1080p.mp4',
+    poster: 'https://images.unsplash.com/photo-1517935706615-2717063c2225?q=80&w=1200&auto=format&fit=crop',
+    title: 'Urban Fashion Ad'
   },
   {
-    src: 'https://images.unsplash.com/photo-1580437017351-75766a55c1ad?ixid=M3w3OTkxMTl8MHwxfHNlYXJjaHwxfHxQcm9kdWN0JTIwTGF1bmNoJTIwQWR8ZW58MHwwfHx8MTc2MjU2MTQyNHww&ixlib=rb-4.1.0&w=1600&auto=format&fit=crop&q=80',
-    poster: 'https://images.unsplash.com/photo-1529336953121-ad039f1c3d3b?q=80&w=800&auto=format&fit=crop',
-    title: 'Lifestyle Creative Ad',
+    src: 'https://cdn.coverr.co/videos/coverr-cafe-latte-art-6811/1080p.mp4',
+    poster: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1200&auto=format&fit=crop',
+    title: 'Coffee Brand Spot'
   },
   {
-    src: 'https://images.unsplash.com/photo-1526958938731-27f1ccdb1817?ixid=M3w3OTkxMTl8MHwxfHNlYXJjaHwxfHxMaWZlc3R5bGUlMjBDcmVhdGl2ZSUyMEFkfGVufDB8MHx8fDE3NjI1NjE0MjV8MA&ixlib=rb-4.1.0&w=1600&auto=format&fit=crop&q=80',
-    poster: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
-    title: 'Store Strategy Reel',
-  },
+    src: 'https://cdn.coverr.co/videos/coverr-smartwatch-promo-4823/1080p.mp4',
+    poster: 'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?q=80&w=1200&auto=format&fit=crop',
+    title: 'Smartwatch Promo'
+  }
 ];
 
-export default function VideoAds() {
-  const containerRef = useRef(null);
+const VideoAds = () => {
+  const refs = useRef([]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const videos = Array.from(container.querySelectorAll('video'));
-    const io = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const v = entry.target;
+          const video = entry.target;
           if (entry.isIntersecting) {
-            v.play().catch(() => {});
+            video.play().catch(() => {});
           } else {
-            v.pause();
+            video.pause();
           }
         });
       },
-      { threshold: 0.4 }
+      { threshold: 0.5 }
     );
 
-    videos.forEach((v) => io.observe(v));
-    return () => io.disconnect();
+    refs.current.forEach((v) => v && observer.observe(v));
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section id="video-ads" className="relative bg-[#0f1724] text-white py-16">
-      <div className="container mx-auto px-6" ref={containerRef}>
-        <h3 className="text-2xl md:text-3xl font-semibold text-center">Ad Video Samples</h3>
-        <p className="text-white/70 text-center mt-2 max-w-2xl mx-auto">
-          Autoplaying muted reels — they pause automatically when off-screen.
-        </p>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {VIDEOS.map((v) => (
-            <figure key={v.src} className="rounded-xl overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
-              <video
-                src={v.src}
-                poster={v.poster}
-                muted
-                loop
-                playsInline
-                controls
-                className="w-full h-56 object-cover"
-                onCanPlay={(e) => e.currentTarget.play().catch(() => {})}
-              />
-              <figcaption className="p-4 text-center text-sm text-white/80">{v.title}</figcaption>
-            </figure>
-          ))}
-        </div>
+    <section id="video-ads" className="mx-auto max-w-6xl px-6 py-20 text-white">
+      <h2 className="mb-10 text-center text-3xl font-bold sm:text-4xl">Video Ad Samples</h2>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        {ads.map((ad, i) => (
+          <figure key={i} className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur">
+            <video
+              ref={(el) => (refs.current[i] = el)}
+              className="aspect-video w-full rounded-xl object-cover"
+              src={ad.src}
+              poster={ad.poster}
+              muted
+              playsInline
+              loop
+              preload="metadata"
+            />
+            <figcaption className="px-2 pb-2 pt-3 text-sm text-slate-300">{ad.title}</figcaption>
+          </figure>
+        ))}
       </div>
     </section>
   );
-}
+};
+
+export default VideoAds;
