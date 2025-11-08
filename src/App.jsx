@@ -1,28 +1,43 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react';
+import HeaderHero from './components/HeaderHero';
+import Services from './components/Services';
+import VideoAds from './components/VideoAds';
+import AboutContact from './components/AboutContact';
+import ServiceDetails from './components/ServiceDetails';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [hash, setHash] = useState(window.location.hash || '#/');
+
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash || '#/');
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  const isDetail = useMemo(() => hash.startsWith('#/service/'), [hash]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+    <div className="font-[Poppins] bg-[#0f1724] text-white selection:bg-[#1E90FF]/30">
+      {isDetail ? (
+        <ServiceDetails route={hash} />
+      ) : (
+        <>
+          <HeaderHero />
+          <Services />
+          <VideoAds />
+          <AboutContact />
+          {/* Floating WhatsApp */}
+          <a
+            href="https://wa.me/923015723055"
+            target="_blank"
+            rel="noreferrer"
+            className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-gradient-to-br from-[#32CD32] to-[#1E90FF] shadow-xl grid place-items-center text-white hover:scale-105 transition"
+            aria-label="WhatsApp Chat"
           >
-            Count is {count}
-          </button>
-        </div>
-      </div>
+            WA
+          </a>
+        </>
+      )}
     </div>
-  )
+  );
 }
-
-export default App
